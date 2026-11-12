@@ -1,0 +1,20 @@
+{
+  "说明": [
+    "skill-tidy 扫描的根目录，可以自己往 roots 里加。",
+    "path：~ 是主目录，{project} 是运行时所在的项目目录。",
+    "agents：哪个 agent 读这里。~/.agents/skills 只有 Codex 直接读，Claude Code 经 ~/.claude/skills 里的软链接用到它。",
+    "kind：personal 个人目录，shared 两边共用，builtin 内置，plugin 插件，project 项目目录（可能是团队共用）。",
+    "depth：往下扫几层，根目录算第 0 层。",
+    "find：插件目录不往下扫。installed_plugins 表示按旁边的 installed_plugins.json 找到每个插件的 skills 目录；listing 表示只收加载清单里列出的路径。"
+  ],
+  "roots": [
+    {"path": "~/.claude/skills", "agents": ["claude"], "kind": "personal", "depth": 1},
+    {"path": "~/.agents/skills", "agents": ["codex"], "kind": "shared", "depth": 4},
+    {"path": "~/.codex/skills", "agents": ["codex"], "kind": "personal", "depth": 4},
+    {"path": "~/.codex/skills/.system", "agents": ["codex"], "kind": "builtin", "depth": 1},
+    {"path": "~/.claude/plugins/cache", "agents": ["claude"], "kind": "plugin", "find": "installed_plugins"},
+    {"path": "~/.codex/plugins/cache", "agents": ["codex"], "kind": "plugin", "find": "listing"},
+    {"path": "{project}/.claude/skills", "agents": ["claude"], "kind": "project", "depth": 1},
+    {"path": "{project}/.agents/skills", "agents": ["codex"], "kind": "project", "depth": 4}
+  ]
+}

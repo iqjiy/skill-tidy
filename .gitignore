@@ -1,0 +1,5 @@
+.DS_Store
+__pycache__/
+*.pyc
+# skill-tidy 运行时的输出
+out/

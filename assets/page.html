@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>skill 体检</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1d2129; --sub:#86909c;
+    --line:#e5e6eb; --green:#00b42a; --yellow:#ff7d00; --red:#f53f3f;
+    --green-bg:#e8ffea; --yellow-bg:#fff7e8; --red-bg:#ffece8;
+    --accent:#165dff; --accent-bg:#e8f3ff;
+    --radius:14px; --shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"SF Pro SC","PingFang SC",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;padding:32px 20px 80px;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{margin-bottom:24px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.5px}
+  .meta{color:var(--sub);font-size:13px;margin-top:6px}
+  code,.mono{font-family:"SF Mono",ui-monospace,monospace;font-size:12px;word-break:break-all}
+  .overview{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 24px;margin-bottom:16px}
+  .overview div{font-size:13px;margin:4px 0}
+  .overview b{font-weight:600}
+  .banner{background:var(--accent-bg);color:var(--accent);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:24px}
+
+  .sec{margin-bottom:28px}
+  .sec h2{font-size:18px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .sec h2 .count{font-size:13px;color:var(--sub);font-weight:500}
+  .sec>.note{font-size:12px;color:var(--sub);margin-bottom:12px}
+
+  .item{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+    margin-bottom:12px;border-left:4px solid var(--line);overflow:hidden}
+  .item.green{border-left-color:var(--green)}
+  .item.yellow{border-left-color:var(--yellow)}
+  .item.red{border-left-color:var(--red)}
+  .item>summary{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;list-style:none;flex-wrap:wrap}
+  .item>summary::-webkit-details-marker{display:none}
+  .item>summary:hover{background:#fafbfc}
+  .item-name{font-weight:600;font-size:15px}
+  .lvl{font-size:12px;font-weight:600;white-space:nowrap}
+  .savings{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);font-size:13px}
+  .item-body{padding:0 18px 16px;font-size:14px}
+  .tag{display:inline-block;background:var(--accent-bg);color:var(--accent);font-size:12px;padding:1px 8px;border-radius:6px}
+  .tag.warn{background:var(--yellow-bg);color:var(--yellow)}
+  .tag.bad{background:var(--red-bg);color:var(--red)}
+  .tag.ok{background:var(--green-bg);color:var(--green)}
+  .field{margin:8px 0}
+  .field label{cursor:pointer}
+  .suggest{background:#fafbfc;border-radius:8px;padding:8px 12px;font-size:13px}
+  .risk{background:var(--red-bg);color:var(--red);padding:8px 12px;border-radius:8px;font-size:13px;margin:8px 0}
+
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{text-align:left;padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#fafbfc;color:var(--sub);font-weight:600;font-size:12px;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.pick{width:28px}
+  td.path code{color:var(--ink)}
+  td.small{font-size:12px;color:var(--sub)}
+  td.nowrap{white-space:nowrap}
+  td.status{min-width:5em}
+  .diff{font-size:12px;color:var(--sub);margin-top:8px}
+
+  .summary{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 24px}
+  .summary ol{padding-left:22px}
+  .summary li{margin:6px 0;font-size:14px}
+  .summary li .from{color:var(--sub);font-size:12px}
+  .summary .empty{color:var(--sub);font-size:14px}
+  .conflict{background:var(--red-bg);color:var(--red);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:10px}
+  .pending{background:var(--yellow-bg);color:var(--yellow);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:10px}
+  .total{font-size:13px;color:var(--sub);margin-top:12px}
+
+  ul.diags{list-style:none;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:8px 0}
+  li.diag{padding:8px 20px;font-size:13px;border-bottom:1px solid var(--line)}
+  li.diag:last-child{border-bottom:none}
+  .empty-sec{color:var(--sub);font-size:13px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<!--HEADER-->
+<section class="sec">
+  <h2>去重</h2>
+  <div class="note">同一个 agent 里作用重复的 skill，每组只留一个。"是否处理这一组"和"留哪一个"分开选。</div>
+<!--DEDUP-->
+</section>
+<section class="sec">
+  <h2>收拢</h2>
+  <div class="note">同一个通用 skill 在两边各装一份时，只在 ~/.agents/skills 留一份实体，Claude Code 用软链接指过去。</div>
+<!--CONSOLIDATE-->
+</section>
+<section class="sec">
+  <h2>如果执行会做哪几步 <span class="count" id="step-count"></span></h2>
+  <div class="note">每改一次选择都从头算：先算去重，再算收拢。第一阶段只预览，页面上没有执行入口。</div>
+  <div class="summary">
+    <ol id="step-list"></ol>
+    <div id="problems"></div>
+    <div class="total" id="total"></div>
+  </div>
+</section>
+<section class="sec">
+  <h2>诊断</h2>
+  <div class="note">只在磁盘上找到、清单里没有的，以及扫描时发现的问题。这里的内容不据此建议删除。</div>
+<!--DIAGNOSTICS-->
+</section>
+</div>
+<script id="plan-data" type="application/json">__PLAN_JSON__</script>
+<script>
+/* BEGIN computeSteps */
+function inside(p, top) { return p === top || p.startsWith(top + '/'); }
+
+// 和 plan.py 的 compute_steps 是同一套算法：先去重，再收拢；再找出互相冲突的选择。
+function computeSteps(plan, sel) {
+  const chosen = [];
+  for (const g of plan.dedup.concat(plan.consolidate)) {
+    const s = sel[g.id] || {};
+    const opt = s.process ? (g.options[s.keep] || null) : null;
+    if (opt) chosen.push([g, opt]);
+  }
+  const steps = [], conflicts = [], removed = new Set(), runnable = [];
+  for (const [g, opt] of chosen) {
+    if (opt.blocked) {  // 不可选的方案只报冲突，它的步骤都不做
+      conflicts.push({type: 'blocked', group: g.id, reason: opt.blocked});
+      continue;
+    }
+    runnable.push([g, opt]);
+    for (const st of opt.steps) {
+      if (st.type === 'trash' && removed.has(st.path)) continue;
+      st.removes.forEach(r => removed.add(r));
+      steps.push(Object.assign({}, st, {group: g.id}));
+    }
+  }
+  for (const [g, opt] of runnable) {
+    for (const st of opt.steps) {
+      for (const r of st.removes) {
+        for (const [g2, opt2] of runnable) {
+          if (g2 === g) continue;
+          const kept = new Set(opt2.keeps);
+          opt2.steps.forEach(s2 => s2.needs.forEach(n => kept.add(n)));
+          for (const p of Array.from(kept).sort()) {
+            if (inside(p, r)) conflicts.push({type: 'removed_by_other', group: g2.id, path: p, other_group: g.id, other_step: st.id});
+          }
+        }
+      }
+    }
+  }
+  return {steps: steps, conflicts: conflicts};
+}
+/* END computeSteps */
+
+const PLAN = JSON.parse(document.getElementById('plan-data').textContent);
+const GROUPS = {};
+PLAN.dedup.concat(PLAN.consolidate).forEach(g => { GROUPS[g.id] = g; });
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+}
+
+function selections() {
+  const sel = {};
+  document.querySelectorAll('input.process').forEach(cb => {
+    const gid = cb.dataset.group;
+    const r = document.querySelector('input[name="keep-' + gid + '"]:checked');
+    sel[gid] = {process: cb.checked, keep: r ? r.value : null};
+  });
+  return sel;
+}
+
+function refresh() {
+  const sel = selections();
+  let total = 0;
+  const pending = [];
+  Object.keys(sel).forEach(gid => {
+    const g = GROUPS[gid], s = sel[gid];
+    const opt = s.keep ? g.options[s.keep] : null;
+    const card = document.querySelector('details[data-group="' + gid + '"]');
+    const level = opt ? opt.level : g.level;
+    card.classList.remove('green', 'yellow', 'red');
+    card.classList.add(level);
+    card.querySelector('.lvl').textContent = PLAN.texts.level[level];
+    const sv = card.querySelector('.savings');
+    if (sv) sv.textContent = opt && opt.savings ? '约省 ' + opt.savings + ' 字符' : '';
+    if (s.process && opt) total += opt.savings;
+    if (s.process && !opt) pending.push(g);
+  });
+  const r = computeSteps(PLAN, sel);
+  const list = document.getElementById('step-list');
+  list.innerHTML = r.steps.map(st =>
+    '<li>' + esc(st.text) + ' <span class="from">（' + esc(GROUPS[st.group].name) + '）</span></li>').join('');
+  document.getElementById('step-count').textContent = r.steps.length ? r.steps.length + ' 步' : '';
+  const problems = r.conflicts.map(c => {
+    if (c.type === 'blocked') return '<div class="conflict">「' + esc(GROUPS[c.group].name) + '」' + esc(c.reason) + '</div>';
+    return '<div class="conflict">「' + esc(GROUPS[c.group].name) + '」要用的 <code>' + esc(c.path) +
+      '</code> 会被「' + esc(GROUPS[c.other_group].name) + '」移走</div>';
+  }).concat(pending.map(g => '<div class="pending">「' + esc(g.name) + '」要处理的话，先选留哪一个</div>'));
+  if (!r.steps.length && !problems.length) problems.push('<div class="empty">没有要执行的步骤。</div>');
+  document.getElementById('problems').innerHTML = problems.join('');
+  document.getElementById('total').textContent = total ? '预计从清单里移出约 ' + total + ' 字符的常驻上下文。' : '';
+}
+
+document.addEventListener('change', refresh);
+refresh();
+</script>
+</body>
+</html>
